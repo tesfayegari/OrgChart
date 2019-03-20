@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- <input id='docRef' type='text' maxlength='255' value='' required /> -->
+<div id="ctl00_PlaceHolderSearchArea_ctl01_S3031AEBB_InputKeywords" name="search"></div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="form-group">
+      <label for="lookup-field">Lookup Item:</label>
+      <input type="text" class="form-control" id="lookup-field" placeholder="Search Item" name="lookup-field" required>
+    </div>
+    <button type="submit" class="btn btn-default">Cancel</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    var u = "http://sharepoint.chemtrec.com/sites/chemtrec"; //_spPageContextInfo.webAbsoluteUrl;
+    var selected = false;
+    //Add an input for the Autocomplete.
+
+    var newInput = $('#lookup-field');
+    newInput.autocomplete({
+      source: function (request, response) {
+        $.ajax({
+          url: u + "/_api/web/lists/getbytitle('Ticket Tracking')/items?$filter=substringof('" +
+            request.term + "',Title)&$select=Title,Id&$orderby=Title",
+          method: "GET",
+          headers: {
+            "Accept": "application/json; odata=verbose"
+          },
+          success: function (data) {
+            selected = false;
+            var results = data.d.results;
+            response($.map(results, function (item) {
+              return {
+                label: item.Title,
+                value: item.Id
+              }
+            }));
+          },
+          error: function (data) {
+            alert("Error: " + data);
+          }
+        });
+      },
+      minLength: 3,
+      select: function (event, ui) {
+        //When someone selects an item, populate the hidden form fields
+        newInput.val(ui.item.label);
+        //console.log(ui);
+        selected = true;
+        return false;
+      },
+      close: function (event, ui) {
+        if (!selected) {
+          newInput.val("");
+        }
+        console.log("Menu Closed");
+      }
+    });
+  });
+</script>
