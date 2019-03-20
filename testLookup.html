@@ -18,7 +18,7 @@
 
 <script>
   $(document).ready(function () {
-    var u = "http://sharepoint.chemtrec.com/sites/chemtrec"; //_spPageContextInfo.webAbsoluteUrl;
+    var u = "your sharepoint site url"; //_spPageContextInfo.webAbsoluteUrl;
     var selected = false;
     //Add an input for the Autocomplete.
 
@@ -26,7 +26,7 @@
     newInput.autocomplete({
       source: function (request, response) {
         $.ajax({
-          url: u + "/_api/web/lists/getbytitle('Ticket Tracking')/items?$filter=substringof('" +
+          url: u + "/_api/web/lists/getbytitle('ListNAme')/items?$filter=substringof('" +
             request.term + "',Title)&$select=Title,Id&$orderby=Title",
           method: "GET",
           headers: {
